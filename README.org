@@ -41,7 +41,6 @@ This module enables and provides sane defaults for the Emacs X Window Manager
 
 ** Module Flags
 
-+ =+systemtray= Use the bottom-right corner of Emacs as a system tray.
 + =+workspaces= Enables automatic workspace management for EXWM applications.
 
 ** Plugins

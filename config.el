@@ -8,10 +8,9 @@
     :config
     (exwm-randr-enable))
 
-  (when (featurep! +systemtray)
-    (use-package! exwm-systemtray
-      :config
-      (exwm-systemtray-enable)))
+  (use-package! exwm-systemtray
+    :config
+    (exwm-systemtray-enable))
 
   ;; A few `ido' fixes.
   (use-package! exwm-config
