@@ -1,9 +1,12 @@
 ;;; private/exwm/autoload/exwm-edit.el -*- lexical-binding: t; -*-
 
-(defvar exwm-edit-activate-appropriate-major-mode--timer nil)
+;;;###autoload
+(defvar +exwm-edit-activate-appropriate-major-mode--timer nil)
+;;;###autoload
+(defvar +exwm-edit-default-major-mode 'org-mode)
 
 ;;;###autoload
-(defun exwm-edit-activate-appropriate-major-mode ()
+(defun +exwm-edit-activate-appropriate-major-mode ()
   (setq exwm-edit-activate-appropriate-major-mode--timer
         (run-at-time
          0.01 0.01
@@ -56,5 +59,5 @@
                    (swift (swift-mode))
                    (visualbasic (visual-basic-mode))
                    (xml (sgml-mode))
-                   (t (text-mode)))
+                   (t (funcall +exwm-edit-default-major-mode)))
                  (setq header-line-format header-line-format--old))))))))
