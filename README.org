@@ -68,7 +68,7 @@ This module has no prerequisites.
 
 * Features
 
-+ Edit any application's input field with ~C-c '~.
++ Edit any application's input field with ~C-c \'~.
 + Use Emacs input methods in other applications. Simply set the input method as
   usual with =C-x RET C-\=.
 + Use Evil in any application! Specific browsers such as Google Chrome and
