@@ -82,7 +82,7 @@ Moreover, when this module is loaded, the following global keybindings are made:
 | SPC o N    | Open a nested vanilla Emacs session |
 | SPC f v    | Find file in vanilla Emacs          |
 | SPC f V    | Find this file in vanilla Emacs     |
-| C-c '      | Edit input field in Emacs           |
+| C-c '      | Edit this input field in Emacs      |
 
 * Configuration
 

@@ -154,7 +154,7 @@ expansion occurs within the parent Emacs session.")
   :init
   (defvar exwm-edit-bind-default-keys nil)
   (map! :map exwm-mode-map
-        :desc "Edit input field in Emacs" "C-c '" #'exwm-edit--compose)
+        :desc "Edit this input field in Emacs" "C-c '" #'exwm-edit--compose)
   :config
   (setq! exwm-edit-split "below"
          exwm-edit-paste-delay 0.2)
