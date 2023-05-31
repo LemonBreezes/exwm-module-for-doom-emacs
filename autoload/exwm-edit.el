@@ -1,7 +1,9 @@
 ;;; private/exwm/autoload/exwm-edit.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defvar +exwm-edit-default-major-mode 'org-mode)
+(defvar +exwm-edit-default-major-mode 'org-mode
+  "The major mode used when a programming language is not detected
+after running `exwm-edit--compose'.")
 
 ;;;###autoload
 (defvar +exwm-edit-activate-appropriate-major-mode--timer nil
@@ -9,6 +11,8 @@
 
 ;;;###autoload
 (defun +exwm-edit-activate-appropriate-major-mode ()
+  "Detects what programming language (if any) is present in the
+application's input field and enables the appropriate major mode."
   (setq exwm-edit-activate-appropriate-major-mode--timer
         (run-at-time
          0.01 0.01

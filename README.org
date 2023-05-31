@@ -16,6 +16,7 @@
   - [[#setting-up-your-xinitrc-file][Setting up your ~xinitrc~ file.]]
   - [[#configuring-the-automatic-workspace-creation][Configuring the automatic workspace creation.]]
   - [[#setting-the-default-major-mode-for-exwm-edit][Setting the default major mode for EXWM Edit.]]
+  - [[#setting-up-link-hints-for-chrome-based-and-firefox-based-web-browsers][Setting up link hints for Chrome-based and Firefox-based web browsers]]
   - [[#setting-up-multiple-monitors][Setting up multiple monitors]]
   - [[#setting-up-keybindings-for-non-evil-users][Setting up keybindings for non-Evil users]]
 - [[#troubleshooting][Troubleshooting]]
@@ -123,6 +124,17 @@ would like to change this, set the ~+exwm-edit-default-major-mode~ variable:
 #+begin_src elisp
 (setq +exwm-edit-default-major-mode 'markdown-mode)
 #+end_src
+
+** Setting up link hints for Chrome-based and Firefox-based web browsers
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 01:19]
+:END:
+
+For users of Evil, the ~f~ and ~F~ keys are bound to special Link Hint commands
+within Chrome-based and Firefox-based web browsers. For these commands to work,
+you must have the Link Hint add-on/extension installed. For Chrome-based web
+browsers, install Link Hint through [[https://chrome.google.com/webstore/detail/link-hints/kjjgifdfplpegljdfnpmbjmkngdilmkd][here]]. For Firefox-based web browsers, use
+[[https://addons.mozilla.org/en-US/firefox/addon/linkhints/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][this]] link instead.
 
 ** Setting up multiple monitors
 :PROPERTIES:
