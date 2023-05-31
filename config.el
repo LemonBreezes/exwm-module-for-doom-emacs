@@ -131,17 +131,12 @@ expansion occurs within the parent Emacs session.")
     (setq! exwm-edit-split "below"
            exwm-edit-yank-delay 0.1)
 
-    ;; Add a small delay between keypresses so that `exwm-edit' works more reliably.
-    (advice-add #'exwm-edit--compose
-                :around
-                (defun +exwm-edit--compose-a (oldfun &rest args)
-                  (unwind-protect
-                      (progn (advice-add #'exwm-input--fake-key
-                                         :before
-                                         (defun +exwm-input--fake-key-a (_)
-                                           (sleep-for 0.1)))
-                             (apply oldfun args))
-                    (advice-remove #'exwm-input--fake-key #'+exwm-input--fake-key-a))))
+    ;; For some reason, `exwm-edit--yank' does not work for me reliably without
+    ;; this.
+    (advice-add #'exwm-edit--yank
+                :override
+                (defun +exwm-edit--yank ()
+                  (insert (shell-command-to-string "xclip -o"))))
 
     (add-hook! '(exwm-edit-before-finish-hook
                  exwm-edit-before-cancel-hook)
