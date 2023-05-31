@@ -9,3 +9,5 @@
 (package! exwm-edit)
 (package! language-detection)
 (package! exwm-mff)
+(package! app-launcher :recipe
+  (:host github :repo "SebastienWae/app-launcher"))

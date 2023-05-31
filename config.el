@@ -51,7 +51,7 @@
   (add-hook 'exwm-mode-hook #'doom-mark-buffer-as-real-h)
 
   (map! :leader
-        :desc "Open a GNU/Linux application" "$" #'counsel-linux-app))
+        :desc "Open a GNU/Linux application" "$" #'app-launcher-run-app))
 
 
 (cl-pushnew ?\C-c exwm-input-prefix-keys)
