@@ -28,8 +28,51 @@
     ;; Show EXWM buffers in buffer switching prompts.
     (add-hook 'exwm-mode-hook #'doom-mark-buffer-as-real-h)))
 
-(use-package! exwm-evil
-  :when (featurep! :editor evil)
+;; Configure `exwm-randr' to support multi-monitor setups as well as
+;; hot-plugging HDMI outputs. Read more at:
+;; https://github.com/ch11ng/exwm/wiki#randr-multi-screen
+(use-package! exwm-randr
+  :after exwm
+  :config
+  (add-hook 'exwm-randr-screen-change-hook
+            (lambda ()
+              (let ((xrandr-output-regexp "\n\\([^ ]+\\) connected ")
+                    default-output)
+                (with-temp-buffer
+                  (call-process "xrandr" nil t nil)
+                  (goto-char (point-min))
+                  (re-search-forward xrandr-output-regexp nil 'noerror)
+                  (setq default-output (match-string 1))
+                  (forward-line)
+                  (if (not (re-search-forward xrandr-output-regexp nil 'noerror))
+                      (call-process
+                       "xrandr" nil nil nil
+                       "--output" default-output
+                       "--auto")
+                    (call-process
+                     "xrandr" nil nil nil
+                     "--output" (match-string 1) "--primary" "--auto"
+                     "--output" default-output "--off")
+                    (setq exwm-randr-workspace-monitor-plist
+                          (list 0 (match-string 1))))))))
+  (exwm-randr-enable))
+
+;; Configure emacs input methods in all X windows.
+(when (featurep! +xim)
+  (use-package! exwm-xim
+    :after exwm
+    :config
+    ;; These variables are required for X programs to pick up Emacs IM.
+    (setenv "XMODIFIERS" "@im=exwm-xim")
+    (setenv "GTK_IM_MODULE" "xim")
+    (setenv "QT_IM_MODULE" "xim")
+    (setenv "CLUTTER_IM_MODULE" "xim")
+    (setenv "QT_QPA_PLATFORM" "xcb")
+    (setenv "SDL_VIDEODRIVER" "x11")
+    (exwm-xim-enable)))
+
+(use-package exwm-evil
+  :when (featurep :editor evil)
   :after exwm
   :config
   (exwm-evil-enable-mouse-workaround)
@@ -61,6 +104,8 @@
         :n "gi" #'exwm-firefox-core-focus-first-input
         :n "f" #'exwm-firefox-core-hint-links
         :n "F" #'exwm-firefox-core-hint-links-new-tab-and-switch
+        :n "u" #'exwm-firefox-core-tab-close-undo
+        :n "U" #'exwm-firefox-core-undo
         :after exwm-evil
         ;; This way we can use prefix arguments with these commands
         :n "j" #'exwm-evil-core-down
