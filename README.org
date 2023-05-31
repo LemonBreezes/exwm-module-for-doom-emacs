@@ -178,5 +178,5 @@ Group them up as in the earlier example with Virtual Box workspaces.
 
 First, try disabling the =+workspaces= flag in this module, running ~doom sync~,
 restarting Emacs, and re-running your application. If your application now
-works, please submit an issue to GitHub. Otherwise, the problem is most likely
-with EXWM instead. Feel free to submit an issue anyways.
+works, please submit an issue for this module. Otherwise, the problem is most
+likely with EXWM instead. Feel free to submit an issue anyways.
