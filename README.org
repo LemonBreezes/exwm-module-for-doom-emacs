@@ -33,7 +33,6 @@ This module enables and provides sane defaults for the Emacs X Window Manager
 + Use Emacs input methods in other applications.
 + Use VIM keys in major web browsers like Firefox and Chrome.
 + Launch and control nested Emacs sessions within Emacs.
-+ Truly use Evil everywhere!
 
 ** Maintainers
 
@@ -65,7 +64,7 @@ This module has no prerequisites.
 
 * Features
 
-+ Edit any application's input field with =C-c '=.
++ Edit any application's input field with ~C-c '~.
 + Use Emacs input methods in other applications. Simply set the input method as
   usual with =C-x RET C-\=.
 + Open nested sessions of Emacs with alternate configurations.
@@ -78,11 +77,11 @@ Moreover, when this module is loaded, the following global keybindings are made:
 | Keybinding | Description                         |
 |------------+-------------------------------------|
 | =SPC $=      | Open a GNU/Linux application        |
-| SPC o n    | Open a nested Emacs session         |
-| SPC o N    | Open a nested vanilla Emacs session |
-| SPC f v    | Find file in vanilla Emacs          |
-| SPC f V    | Find this file in vanilla Emacs     |
-| C-c '      | Edit this input field in Emacs      |
+| =SPC o n=    | Open a nested Emacs session         |
+| =SPC o N=    | Open a nested vanilla Emacs session |
+| =SPC f v=    | Find file in vanilla Emacs          |
+| =SPC f V=    | Find this file in vanilla Emacs     |
+| =C-c '=      | Edit input field in Emacs           |
 
 * Configuration
 
