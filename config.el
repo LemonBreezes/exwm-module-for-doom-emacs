@@ -49,7 +49,10 @@
   (advice-add #'+workspace-switch :after #'+exwm-refocus-application)
 
   ;; Show EXWM buffers in buffer switching prompts.
-  (add-hook 'exwm-mode-hook #'doom-mark-buffer-as-real-h))
+  (add-hook 'exwm-mode-hook #'doom-mark-buffer-as-real-h)
+
+  (map! :leader
+        :desc "Open a GNU/Linux application" "$" #'counsel-linux-app))
 
 
 (cl-pushnew ?\C-c exwm-input-prefix-keys)

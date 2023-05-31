@@ -77,6 +77,12 @@ This module has no prerequisites.
 + Automatically create/delete workspaces for your applications as you use them!
   Simply enable the =+workspaces= flag.
 
+Moreover, when this module is loaded, the following global keybindings are made:
+
+| Keybinding | Description                  |
+|------------+------------------------------|
+| =SPC $=    | Open a GNU/Linux application |
+
 * Configuration
 
 ** Setting up your ~xinitrc~ file.
