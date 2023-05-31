@@ -7,3 +7,4 @@
 (package! exwm-firefox-evil)
 (package! exwm-edit)
 (package! language-detection)
+(package! exwm-mff)

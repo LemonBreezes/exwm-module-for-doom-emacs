@@ -3,12 +3,14 @@
 ;;;###autoload
 (defun exwm-firefox-core-hint-links ()
   (interactive)
-  (exwm-input--fake-key ?\M-j))
+  (exwm-input--fake-key ?\M-j)
+  (exwm-firefox-evil-insert))
 
 ;;;###autoload
 (defun exwm-firefox-core-hint-links-new-tab-and-switch ()
   (interactive)
-  (exwm-input--fake-key ?\M-l))
+  (exwm-input--fake-key ?\M-l)
+  (exwm-firefox-evil-insert))
 
 ;;;###autoload
 (defun exwm-firefox-core-focus-first-input ()

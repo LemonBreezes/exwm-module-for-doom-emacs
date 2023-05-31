@@ -22,7 +22,7 @@
                   #'exwm--update-utf8-title-advice))
 
     ;; For some reason, after switching workspaces, input focus is not updated.
-    ;; HACK This uses a mouse click to refocus a given EXWM application.
+    ;; HACK This uses a mouse click to regain focus.
     (add-hook 'persp-activated-functions #'+exwm-refocus-application)
 
     ;; Show EXWM buffers in buffer switching prompts.
@@ -72,7 +72,7 @@
     (exwm-xim-enable)))
 
 (use-package exwm-evil
-  :when (featurep :editor evil)
+  :when (featurep! :editor evil)
   :after exwm
   :config
   (exwm-evil-enable-mouse-workaround)
@@ -125,3 +125,8 @@
     (defun exwm-edit-clear-last-kill ()
       (setq exwm-edit-last-kill nil)))
   (add-hook 'exwm-edit-compose-hook #'exwm-edit-activate-appropriate-major-mode))
+
+(use-package! exwm-mff
+  :hook (exwm-init . exwm-mff-mode)
+  :config
+  (add-hook! 'persp-activated-functions (exwm-mff-warp-to-selected)))
