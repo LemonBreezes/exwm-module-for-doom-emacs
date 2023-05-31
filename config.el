@@ -73,7 +73,7 @@
   :after exwm
   :config
   (cl-pushnew 'escape exwm-input-prefix-keys)
-  ;; We can use Vim keys with any browser that has compatible keybindings.
+  ;; We can use VIM keys with any browser that has compatible keybindings.
   (cl-loop for class in '("firefoxdeveloperedition"
                           "\"firefoxdeveloperedition\""
                           "IceCat"
@@ -85,7 +85,6 @@
 
   (add-hook 'exwm-manage-finish-hook 'exwm-firefox-evil-activate-if-firefox)
   (map! :map exwm-firefox-evil-mode-map
-        :n "gi" #'exwm-firefox-core-focus-first-input
         :n "f" #'exwm-firefox-core-hint-links ; Requires links-hint add-on.
         :n "F" #'exwm-firefox-core-hint-links-new-tab-and-switch
         :n "u" #'exwm-firefox-core-tab-close-undo

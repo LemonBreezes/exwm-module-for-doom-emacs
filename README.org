@@ -68,7 +68,7 @@ This module has no prerequisites.
 
 * Features
 
-+ Edit any application's input field with ~C-c \'~.
++ Edit any application's input field with ~C-c '~.
 + Use Emacs input methods in other applications. Simply set the input method as
   usual with =C-x RET C-\=.
 + Use Evil in any application! Specific browsers such as Google Chrome and
@@ -81,7 +81,7 @@ This module has no prerequisites.
 
 ** Setting up your ~xinitrc~ file.
 
-In order to enable EXWM, Emacs needs to be running within Xorg without any
+In order to enable EXWM, Emacs needs to be running within X.Org without any
 window manager present. The recommended way to go about this is with the
 ~startx~ script. The [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][EXWM wiki]] contains an example ~xinitrc~ file for use by
 ~startx~.

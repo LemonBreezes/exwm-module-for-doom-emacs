@@ -39,7 +39,7 @@ https://github.com/ch11ng/exwm/issues/693#issuecomment-750928572"
 
 ;;;###autoload
 (defun +exwm-refocus-application (&rest _)
-  "TODO"
+  "Click on a specific portion of the application to refocus input."
   (run-at-time
    0.02 nil
    (defun +exwm-refocus-application--timer (&rest _)
@@ -54,7 +54,7 @@ https://github.com/ch11ng/exwm/issues/693#issuecomment-750928572"
 
 ;;;###autoload
 (defun +exwm-rename-buffer-to-title ()
-  "TODO"
+  "Rename the buffer to its `exwm-title'."
   (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
               (string= "gimp" exwm-instance-name))
     (exwm-workspace-rename-buffer exwm-title)))
