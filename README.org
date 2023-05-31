@@ -18,7 +18,6 @@
   - [[#setting-the-default-major-mode-for-exwm-edit][Setting the default major mode for EXWM Edit.]]
   - [[#setting-up-link-hints-for-chrome-based-and-firefox-based-web-browsers][Setting up link hints for Chrome-based and Firefox-based web browsers]]
   - [[#setting-up-multiple-monitors][Setting up multiple monitors]]
-  - [[#setting-up-keybindings-for-non-evil-users][Setting up keybindings for non-Evil users]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#how-do-i-send-escape-or-c-c-to-applications][How do I send ~escape~ or ~C-c~ to applications?]]
   - [[#when-i-mouse-click-while-in-evils-normal-state-i-get-an-error][When I mouse-click while in Evil's normal state I get an error.]]
@@ -145,13 +144,6 @@ Currently this module does not provide any simplified setup for multi-head
 configurations. Please refer to
 https://github.com/ch11ng/exwm/wiki#randr-multi-screen for how to do this. Work
 on an automated setup for multiple monitors is a future goal of this module.
-
-** Setting up keybindings for non-Evil users
-:PROPERTIES:
-:CREATED_TIME: [2022-01-06 Thu 00:14]
-:END:
-
-By default, no keybindings are provided for non-Evil users.
 
 * Troubleshooting
 
