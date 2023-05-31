@@ -44,10 +44,11 @@ https://github.com/ch11ng/exwm/issues/693#issuecomment-750928572"
    0.02 nil
    (defun +exwm-refocus-application--timer (&rest _)
      (cl-destructuring-bind
-         ((mouse-x . mouse-y) (dim-x . dim-y))
+         ((mouse-x . mouse-y) dim-x dim-y)
          (list (mouse-absolute-pixel-position)
-               (cons (window-pixel-width) (window-pixel-height)))
+               (window-pixel-width) (window-pixel-height))
        (when (exwm--buffer->id (current-buffer))
+         ;; All that matters is that this spot be blank in the application.
          (+exwm-do-mouse-click (floor (* dim-x (/ 1.0 1000)))
                                (floor (* dim-y (/ 120.0 1410)))))))))
 

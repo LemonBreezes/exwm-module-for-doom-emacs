@@ -21,10 +21,11 @@
       (advice-add #'exwm--update-utf8-title :around
                   #'exwm--update-utf8-title-advice))
 
-    ;; HACK Uses a mouse click to refocus the application.
+    ;; For some reason, after switching workspaces, input focus is not updated.
+    ;; HACK This uses a mouse click to refocus a given EXWM application.
     (add-hook 'persp-activated-functions #'+exwm-refocus-application)
 
-    ;; Show `exwm' buffers in buffer switching prompts.
+    ;; Show EXWM buffers in buffer switching prompts.
     (add-hook 'exwm-mode-hook #'doom-mark-buffer-as-real-h)))
 
 (use-package! exwm-evil
