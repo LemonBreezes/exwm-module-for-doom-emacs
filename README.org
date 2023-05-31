@@ -13,7 +13,9 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
-  - [[#][]]
+  - [[#setting-up-your-xinitrc-file][Setting up your ~xinitrc~ file.]]
+  - [[#configuring-the-automatic-workspace-creation][Configuring the automatic workspace creation.]]
+  - [[#setting-the-default-major-mode-for-c-c-][Setting the default major mode for ~C-c '~]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -60,7 +62,7 @@ This module has no prerequisites.
 
 * Features
 
-+ Edit any application's input field with =C-c '=
++ Edit any application's input field with ~C-c '~
 + Use Emacs input methods in other applications. Simply set the input method as
   usual with =C-x RET C-\=
 + Use Evil in any application! Specific browsers such as Google Chrome and
@@ -71,9 +73,17 @@ This module has no prerequisites.
 
 * Configuration
 
-**
+** Setting up your ~xinitrc~ file.
 
+** Configuring the automatic workspace creation.
+:PROPERTIES:
+:CREATED_TIME: [2022-01-05 Wed 23:43]
+:END:
 
+** Setting the default major mode for ~C-c '~
+:PROPERTIES:
+:CREATED_TIME: [2022-01-05 Wed 23:44]
+:END:
 
 * Troubleshooting
 
