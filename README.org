@@ -4,7 +4,6 @@
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
-
 - [[#description][Description]]
   - [[#maintainers][Maintainers]]
   - [[#module-flags][Module Flags]]
@@ -20,6 +19,7 @@
 - [[#troubleshooting][Troubleshooting]]
   - [[#how-do-i-send-escape-or-c-c-to-applications][How do I send ~escape~ or ~C-c~ to applications?]]
   - [[#when-i-mouse-click-while-in-evils-normal-state-i-get-an-error][When I mouse-click while in Evil's normal state I get an error.]]
+- [[#todo][TODO]]
 
 * Description
 
@@ -125,3 +125,12 @@ recommend ignoring this error though as your clicks still register.
 
 This bug is a result of a workaround I copied from this GitHub issue:
 https://github.com/walseb/exwm-firefox-evil/issues/1
+
+* TODO
+:PROPERTIES:
+:CREATED_TIME: [2022-02-25 Fri 21:17]
+:END:
+
+Add a `qemacs` submodule. Also document the `xwininfo` requirement for
+`posframe` and the necessity to run `posframe-delete-all` if something goes
+wrong. Also fix the hack section because the mouse hack was removed.

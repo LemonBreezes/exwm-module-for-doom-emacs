@@ -17,7 +17,7 @@ application's input field and enables the appropriate major mode."
     (evil-insert-state))
   (setq exwm-edit-activate-appropriate-major-mode--timer
         (run-at-time
-         0.03 0.03
+         0.05 0.05
          (defun exwm-edit-activate-appropriate-major-mode--timer-fn (&rest _)
            (unless (string-prefix-p "*exwm-edit "
                                     (buffer-name))

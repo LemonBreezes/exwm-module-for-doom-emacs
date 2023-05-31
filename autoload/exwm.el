@@ -1,57 +1,19 @@
 ;;; os/exwm/autoload/exwm.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun +exwm-do-mouse-click (x y &optional button-num window-id)
-  "Perform a mouse click at (window relative) position X and Y
-
-By default BUTTON-NUM is ``1'' (i.e. main click) and the WINDOW-ID is the currently selected window.
-
-This function was taken from:
-https://github.com/ch11ng/exwm/issues/693#issuecomment-750928572"
-  (let* ((button-index (intern (format "xcb:ButtonIndex:%d" (or button-num 1))))
-         (button-mask (intern (format "xcb:ButtonMask:%d" (or button-num 1))))
-         (window-id (or window-id (exwm--buffer->id
-                                   (window-buffer (selected-window)))
-                        (user-error "No window selected")))
-         (button-actions `((xcb:ButtonPress . ,button-mask)
-                           (xcb:ButtonRelease . 0))))
-    (dolist (b-action button-actions)
-      (xcb:+request exwm--connection
-          (make-instance 'xcb:SendEvent
-                         :propagate 0
-                         :destination window-id
-                         :event-mask xcb:EventMask:NoEvent
-                         :event (xcb:marshal
-                                 (make-instance (car b-action)
-                                                :detail button-index
-                                                :time xcb:Time:CurrentTime
-                                                :root exwm--root
-                                                :event window-id
-                                                :child 0
-                                                :root-x 0
-                                                :root-y 0
-                                                :event-x x
-                                                :event-y y
-                                                :state (cdr b-action)
-                                                :same-screen 0)
-                                 exwm--connection))))
-    (xcb:flush exwm--connection)))
-
-;;;###autoload
 (defun +exwm-refocus-application (&rest _)
-  "Click on a specific portion of the application to refocus input."
-  (run-at-time
-   0.02 nil
-   (defun +exwm-refocus-application--timer (&rest _)
-     (when (and (derived-mode-p 'exwm-mode)
-                (exwm--buffer->id (current-buffer)))
-       (cl-destructuring-bind
-           ((mouse-x . mouse-y) dim-x dim-y)
-           (list (mouse-absolute-pixel-position)
-                 (window-pixel-width) (window-pixel-height))
-         ;; All that matters is that this spot be blank in the application.
-         (+exwm-do-mouse-click (floor (* dim-x (/ 1.0 1000)))
-                               (floor (* dim-y (/ 120.0 1410)))))))))
+  "Refocus input for the currently selected EXWM buffer, if any."
+  (let ((input-delay 0.02))
+    (run-at-time
+     input-delay nil
+     `(lambda (&rest _)
+        (when exwm--id
+          (advice-add #'+exwm-refocus-application :override #'ignore)
+          (run-at-time ,input-delay nil (lambda () (throw 'exit (lambda ()))))
+          (run-at-time
+           ,(* 2 input-delay) nil
+           (lambda () (advice-remove #'+exwm-refocus-application #'ignore)))
+          (read-string ""))))))
 
 ;;;###autoload
 (defun +exwm-rename-buffer-to-title ()
@@ -65,3 +27,58 @@ https://github.com/ch11ng/exwm/issues/693#issuecomment-750928572"
   "Only update the window title when the buffer is visible."
   (when (get-buffer-window (exwm--id->buffer id))
     (funcall oldfun id force)))
+
+;;;###autoload
+(defun +exwm-open-nested-emacs (arg)
+  "Open a separate GUI instance of Emacs. If ARG is non-nil, create
+a new workspace as well."
+  (interactive "P")
+  (apply #'start-process "Emacs" nil "emacs"
+         (when arg (list "--debug-init"))))
+
+;;;###autoload
+(defun +exwm-open-nested-vanilla-emacs (arg)
+  (interactive "P")
+  (apply #'start-process "Emacs" nil "emacs" "-Q"
+         "--eval" (+exwm-read-unquote-config +exwm-vanilla-emacs-config-file)
+         (when arg (list "--debug-init"))))
+
+(defun +exwm-read-unquote-config (fname)
+  (thread-last
+    `(backquote
+      ,(let ((sexps nil))
+         (with-temp-buffer
+           (insert-file-contents fname)
+           (condition-case _
+               (while t (push (read (current-buffer)) sexps))
+             (end-of-file))
+           (setq sexps (nreverse sexps))
+           (push 'progn sexps))))
+    (eval)
+    (prin1-to-string)))
+
+;;;###autoload
+(defun +exwm-vanilla-emacs-find-this-file ()
+  (interactive)
+  (+exwm-vanilla-emacs-find-file (buffer-file-name)))
+
+;;;###autoload
+(defun +exwm-vanilla-emacs-find-file (file)
+  ;; TODO Read about interactive to improve this
+  (interactive)
+  (funcall #'start-process "Emacs" nil "emacs" "-Q"
+         "--eval" (+exwm-read-unquote-config +exwm-vanilla-emacs-config-file)
+         "--file" (or file
+                      (read-file-name "Find file: " nil default-directory nil))))
+
+;;;###autoload
+(defun +exwm-setup-nested-emacs-keys ()
+  "Set up the keybindings for separate Emacs sessions managed
+under EXWM."
+  (when (and exwm-class-name
+             (string= exwm-class-name "Emacs"))
+    (setq-local exwm-input-prefix-keys
+                (cl-remove-if
+                 (lambda (key) (memq key '(?\C-x ?\C-h ?\C-u ?\M-: ?\M-x)))
+                 exwm-input-prefix-keys))
+    (setq-local overriding-local-map +exwm-nested-emacs-map)))
