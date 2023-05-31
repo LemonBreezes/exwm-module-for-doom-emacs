@@ -13,3 +13,11 @@
   (interactive)
   (exwm-input--fake-key ?\M-l)
   (exwm-firefox-evil-insert))
+
+;;;###autoload
+(defun +exwm-firefox-core-cancel ()
+  (interactive)
+  "General cancel action."
+  (interactive)
+  (exwm-input--fake-key 'escape)
+  (+exwm-refocus-application))

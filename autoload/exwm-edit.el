@@ -55,7 +55,7 @@ application's input field and enables the appropriate major mode."
                    (php (php-mode))
                    (prolog (prolog-mode))
                    (python (python-mode))
-                   (r r-(mode))
+                   (r (r-mode))
                    (ruby (ruby-mode))
                    (rust (rust-mode))
                    (scala (scala-mode))

@@ -57,9 +57,6 @@
 (cl-pushnew ?\C-c exwm-input-prefix-keys)
 (map! :map exwm-mode-map
       :prefix "C-c"
-      ;; We need a prefix to execute Emacs commands with. As `C-c' is our
-      ;; prefix, we also need a way to send `C-c' to the application.
-      :desc "Send C-c" "C-c" (cmd! (exwm-input--fake-key ?\C-c))
       ;; We also set up a separate general way to send prefix keys to our
       ;; application.
       :desc "Send the next key" "C-q" #'exwm-input-send-next-key)
@@ -70,11 +67,7 @@
   :config
   (exwm-evil-enable-mouse-workaround)
   (add-hook 'exwm-manage-finish-hook 'exwm-evil-mode)
-  (cl-pushnew 'escape exwm-input-prefix-keys)
-  (map! :map exwm-evil-mode-map
-        ;; We need a way to send the `escape' key to the EXWM application.
-        :prefix "C-c"
-        :desc "Send Escape" "C-i" (cmd! (exwm-input--fake-key 'escape))))
+  (cl-pushnew 'escape exwm-input-prefix-keys))
 
 (use-package! exwm-firefox-evil
   :when (featurep! :editor evil)
@@ -98,7 +91,13 @@
         :n "u" #'exwm-firefox-core-tab-close-undo
         :n "U" #'exwm-firefox-core-undo
         :n "/" #'exwm-firefox-core-find ; Compatible with Chrome as well.
+        :n [remap exwm-firefox-core-cancel] #'+exwm-firefox-core-cancel
         :after exwm-evil
+        ;; These are mroe in line with Evil than the default
+        :n "g0" #'exwm-firefox-core-tab-first
+        :n "g$" #'exwm-firefox-core-tab-last
+        :n "0"  #'exwm-evil-core-beginning-of-line
+        :n "$"  #'exwm-evil-core-end-of-line
         ;; This way we can use prefix arguments with these commands.
         :n "j" #'exwm-evil-core-down
         :n "k" #'exwm-evil-core-up
@@ -117,7 +116,13 @@
                exwm-edit-before-cancel-hook)
     (defun exwm-edit-clear-last-kill ()
       (setq exwm-edit-last-kill nil)))
-  (add-hook 'exwm-edit-compose-hook #'exwm-edit-activate-appropriate-major-mode))
+  (add-hook 'exwm-edit-compose-hook #'+exwm-edit-activate-appropriate-major-mode))
 
 (use-package! exwm-mff
   :hook (exwm-init . exwm-mff-mode))
+
+(after! helm
+  ;; Using `helm-display-buffer-in-own-frame' causes EXWM to emit an error.
+  (when (eq helm-default-display-buffer-functions
+            #'helm-display-buffer-in-own-frame)
+    (setq helm-default-prompt-display-function #'helm-default-display-buffer)))
