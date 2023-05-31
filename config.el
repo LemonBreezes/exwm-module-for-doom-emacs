@@ -112,6 +112,7 @@
   :after exwm
   :config
   (setq exwm-edit-split "below")
+  (setq exwm-edit-paste-delay 0.1)
   (add-hook! '(exwm-edit-before-finish-hook
                exwm-edit-before-cancel-hook)
     (defun exwm-edit-clear-last-kill ()

@@ -13,9 +13,11 @@ after running `exwm-edit--compose'.")
 (defun +exwm-edit-activate-appropriate-major-mode ()
   "Detects what programming language (if any) is present in the
 application's input field and enables the appropriate major mode."
+  (when (featurep! :editor evil)
+    (evil-insert-state))
   (setq exwm-edit-activate-appropriate-major-mode--timer
         (run-at-time
-         0.01 0.01
+         0.03 0.03
          (defun exwm-edit-activate-appropriate-major-mode--timer-fn (&rest _)
            (unless (string-prefix-p "*exwm-edit "
                                     (buffer-name))
@@ -27,7 +29,8 @@ application's input field and enables the appropriate major mode."
                                       (buffer-name))
                  (cl-case (language-detection-buffer)
                    (ada (ada-mode))
-                   (awk (awk-mode))
+                   ;; Awk mode was getting incorrectly used for ordinary text.
+                   ;; (awk (awk-mode))
                    (c (c-mode))
                    (cpp (c++-mode))
                    (clojure (clojure-mode))
@@ -66,4 +69,7 @@ application's input field and enables the appropriate major mode."
                    (visualbasic (visual-basic-mode))
                    (xml (sgml-mode))
                    (t (funcall +exwm-edit-default-major-mode)))
+                 (when (featurep! :editor evil)
+                   (evil-insert-state))
+                 (end-of-line)
                  (setq header-line-format header-line-format--old))))))))
