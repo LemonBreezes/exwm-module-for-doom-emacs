@@ -3,17 +3,18 @@
 ;;;###autoload
 (defun +exwm-refocus-application (&rest _)
   "Refocus input for the currently selected EXWM buffer, if any."
-  (let ((input-delay 0.02))
+  (let ((input-delay 0.05))
     (run-at-time
-     input-delay nil
-     `(lambda (&rest _)
-        (when exwm--id
-          (advice-add #'+exwm-refocus-application :override #'ignore)
-          (run-at-time ,input-delay nil (lambda () (throw 'exit (lambda ()))))
-          (run-at-time
-           ,(* 2 input-delay) nil
-           (lambda () (advice-remove #'+exwm-refocus-application #'ignore)))
-          (read-string ""))))))
+     input-delay
+     nil
+     (defun +exwm-refocus-application--timer ()
+       (when exwm-class-name
+         (advice-add #'+exwm-refocus-application :override #'ignore)
+         (run-at-time (* 2 input-delay) nil
+                      (defun +exwm-refocus-application--cleanup ()
+                        (advice-remove #'+exwm-refocus-application #'ignore)))
+         (run-at-time input-delay nil (lambda () (throw 'exit #'ignore)))
+         (read-string ""))))))
 
 ;;;###autoload
 (defun +exwm-rename-buffer-to-title ()

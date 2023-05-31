@@ -85,10 +85,11 @@ expansion occurs within the parent Emacs session.")
   ;; For people who run nested Emacs instances within EXWM.
   (setq! exwm-replace nil)
 
-  ;; HACK Fix focus being lost from EXWM buffers when switching workspaces. It's
-  ;; possible this only happens for me when the Evil module is enabled, I will
-  ;; need to do more testing.
-  (add-hook 'window-configuration-change-hook #'+exwm-refocus-application)
+  ;; HACK Fixes focus being lost from EXWM buffers when switching workspaces or
+  ;; buffers. This seems to be a problem specific to Doom. There is probably a
+  ;; more elegant solution but it requires more digging.
+  (advice-add #'+workspace/switch-to :after #'+exwm-refocus-application)
+  (add-hook 'doom-switch-buffer-hook #'+exwm-refocus-application)
 
   (define-key +exwm-nested-emacs-map (kbd "C-c")
     (cmd! (exwm-input--fake-key ?\C-c)))
@@ -97,13 +98,63 @@ expansion occurs within the parent Emacs session.")
 
   (when (featurep! :editor evil)
     (evil-set-initial-state 'exwm-mode 'emacs)
-    (cl-pushnew (aref (kbd doom-leader-alt-key) 0) exwm-input-prefix-keys)))
+    (cl-pushnew (aref (kbd doom-leader-alt-key) 0) exwm-input-prefix-keys))
+
+  (when (featurep! :ui popup)
+    (cl-pushnew ?\C-` exwm-input-prefix-keys))
+
+  ;; Workarounds for childframes
+  (after! corfu
+    (advice-add #'corfu--make-frame :around
+                (defun +corfu--make-frame-a (oldfun &rest args)
+                  (cl-letf (((symbol-function #'frame-parent)
+                             (lambda (frame)
+                               (or (frame-parameter frame 'parent-frame)
+                                   exwm-workspace--current))))
+                    (apply oldfun args))
+                  (when exwm--connection
+                    (set-frame-parameter corfu--frame 'parent-frame nil))))
+
+    (advice-add #'corfu--popup-redirect-focus :override
+                (defun +corfu--popup-redirect-focus-a ()
+                  (redirect-frame-focus corfu--frame
+                                        (or (frame-parent corfu--frame)
+                                            exwm-workspace--current)))))
+  (after! corfu-doc
+    (advice-add #'corfu-doc--redirect-focus :override
+                (defun +corfu-doc--redirect-focus ()
+                  (redirect-frame-focus corfu-doc--frame
+                                        (or (frame-parent corfu-doc--frame)
+                                            exwm-workspace--current))))
+
+    (advice-add #'corfu-doc--make-frame :around
+                (defun +corfu-doc--make-frame-a (oldfun &rest args)
+                  (cl-letf (((symbol-function #'frame-parent)
+                             (lambda (frame)
+                               (or (frame-parameter frame 'parent-frame)
+                                   exwm-workspace--current))))
+                    (apply oldfun args))
+                  (when exwm--connection
+                    (set-frame-parameter corfu-doc--frame 'parent-frame nil)))))
+
+  (after! mini-popup
+    (advice-add #'mini-popup--setup-frame :around
+                (defun +mini-popup--setup-frame-a (oldfun &rest args)
+                  (cl-letf (((symbol-function #'frame-parent)
+                             (lambda (frame)
+                               (or (frame-parameter frame 'parent-frame)
+                                   exwm-workspace--current))))
+                    (apply oldfun args))
+                  (when exwm--connection
+                    (set-frame-parameter mini-popup--frame 'parent-frame nil))))))
 
 (use-package! exwm-edit
   :after exwm
+  :init
+  (defvar exwm-edit-bind-default-keys nil)
   :config
-  (setq! exwm-edit-split "below")
-  (setq! exwm-edit-paste-delay 0.2)
+  (setq! exwm-edit-split "below"
+         exwm-edit-paste-delay 0.2)
   (add-hook! '(exwm-edit-before-finish-hook
                exwm-edit-before-cancel-hook)
     (defun exwm-edit-clear-last-kill ()
