@@ -129,14 +129,34 @@ expansion occurs within the parent Emacs session.")
           :desc "Edit this input field in Emacs" "'" #'exwm-edit--compose)
     :config
     (setq! exwm-edit-split "below"
-           exwm-edit-yank-delay 0.1)
+           exwm-edit-yank-delay 0
+           exwm-edit-paste-delay 0)
 
     ;; For some reason, `exwm-edit--yank' does not work for me reliably without
     ;; this.
     (advice-add #'exwm-edit--yank
                 :override
                 (defun +exwm-edit--yank ()
-                  (insert (shell-command-to-string "xclip -o"))))
+                  (delete-region (point-min) (point-max))
+                  (insert (gui-get-selection 'CLIPBOARD 'UTF8_STRING))))
+    (advice-add #'exwm-edit--compose
+                :around
+                (defun +exwm-edit--compose-a (oldfun &rest args)
+                  (exwm-input--fake-key ?\C-a)
+                  (run-at-time 0.06 nil #'exwm-input--fake-key ?\C-c)
+                  (run-at-time 0.12 nil #'apply oldfun args)))
+    (advice-add #'exwm-edit--send-to-exwm-buffer
+                   :override
+                   (defun +exwm-edit--send-to-exwm-buffer-a (text)
+                     (exwm-edit--switch)
+                     (exwm-input--set-focus (exwm--buffer->id (window-buffer (selected-window))))
+                     (+exwm-refocus-application)
+                     (run-at-time 0.07 nil (lambda () (exwm-input--fake-key ?\C-a)))
+                     (run-at-time 0.12 nil
+                                  (lambda (text)
+                                    (kill-new text)
+                                    (exwm-input--fake-key ?\C-v))
+                                  text)))
 
     (add-hook! '(exwm-edit-before-finish-hook
                  exwm-edit-before-cancel-hook)
