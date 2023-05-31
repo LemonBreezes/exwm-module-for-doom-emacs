@@ -15,8 +15,14 @@
 - [[#configuration][Configuration]]
   - [[#setting-up-your-xinitrc-file][Setting up your ~xinitrc~ file.]]
   - [[#configuring-the-automatic-workspace-creation][Configuring the automatic workspace creation.]]
-  - [[#setting-the-default-major-mode-for-c-c-][Setting the default major mode for ~C-c '~]]
+  - [[#setting-the-default-major-mode-for-exwm-edit][Setting the default major mode for EXWM Edit.]]
+  - [[#setting-up-multiple-monitors][Setting up multiple monitors]]
+  - [[#setting-up-keybindings-for-non-evil-users][Setting up keybindings for non-Evil users]]
 - [[#troubleshooting][Troubleshooting]]
+  - [[#how-do-i-send-escape-or-c-c-to-applications][How do I send ~escape~ or ~C-c~ to applications?]]
+  - [[#when-i-mouse-click-while-in-evils-normal-state-i-get-an-error][When I mouse-click while in Evil's normal state I get an error.]]
+  - [[#my-exwm-application-creates-multiple-workspaces-at-once][My EXWM application creates multiple workspaces at once]]
+  - [[#my-application-loads-a-blank-buffer-or-otherwise-does-not-function][My application loads a blank buffer or otherwise does not function.]]
 
 * Description
 
@@ -75,16 +81,102 @@ This module has no prerequisites.
 
 ** Setting up your ~xinitrc~ file.
 
+In order to enable EXWM, Emacs needs to be running within Xorg without any
+window manager present. The recommended way to go about this is with the
+~startx~ script. The [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][EXWM wiki]] contains an example ~xinitrc~ file for use by
+~startx~.
+
 ** Configuring the automatic workspace creation.
 :PROPERTIES:
 :CREATED_TIME: [2022-01-05 Wed 23:43]
 :END:
 
-** Setting the default major mode for ~C-c '~
+By default, workspaces for applications are named whatever their
+~exwm-class-name~ is. We can modify this behavior to group several related
+applications as follows:
+#+begin_src elisp
+(cl-loop for app in '("virtualbox"
+                      "virtualbox manager"
+                      "virtualbox machine"
+                      "virtualboxvm")
+         do (setf (alist-get app +exwm-workspace-name-replacements
+                             nil nil #'cl-equalp)
+                  "VirtualBox"))
+#+end_src
+
+You can also use ~+exwm-workspace-name-replacements~ to shorten long workspace
+names:
+#+begin_src elisp
+(setf (alist-get "google-chrome-unstable" +exwm-workspace-name-replacements
+                 nil nil #'cl-equalp)
+      "Chrome")
+#+end_src
+
+** Setting the default major mode for EXWM Edit.
 :PROPERTIES:
 :CREATED_TIME: [2022-01-05 Wed 23:44]
 :END:
 
+By default, when you edit an application's input field and no programming
+language can be detected in the text, ~org-mode~ will your major mode. If you
+would like to change this, set the ~+exwm-edit-default-major-mode~ variable:
+#+begin_src elisp
+(setq +exwm-edit-default-major-mode 'markdown-mode)
+#+end_src
+
+** Setting up multiple monitors
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:06]
+:END:
+
+Currently this module does not provide any simplified setup for multi-head
+configurations. Please refer to
+https://github.com/ch11ng/exwm/wiki#randr-multi-screen for how to do this. Work
+on an automated setup for multiple monitors is a future goal of this module.
+
+** Setting up keybindings for non-Evil users
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:14]
+:END:
+
+By default, no keybindings are provided for non-Evil users.
+
 * Troubleshooting
 
 # Common issues and their solution, or places to look for help.
+
+** How do I send ~escape~ or ~C-c~ to applications?
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:13]
+:END:
+
+| Keybind   | Description                                            |
+|-----------+--------------------------------------------------------|
+| =C-c C-i= | Send the escape key (only bound when Evil is enabled). |
+| =C-c C-c= | Send the C-c key.                                      |
+
+** When I mouse-click while in Evil's normal state I get an error.
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:24]
+:END:
+
+I (the author) do not know how to suppress or remove the,
+"evil-mouse-drag-region must be bound to an event with parameters" error. I
+recommend ignoring this error though as your clicks still register.
+
+** My EXWM application creates multiple workspaces at once
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:32]
+:END:
+
+Group them up as in the earlier example with Virtual Box workspaces.
+
+** My application loads a blank buffer or otherwise does not function.
+:PROPERTIES:
+:CREATED_TIME: [2022-01-06 Thu 00:34]
+:END:
+
+First, try disabling the =+workspaces= flag in this module, running ~doom sync~,
+restarting Emacs, and re-running your application. If your application now
+works, please submit an issue to GitHub. Otherwise, the problem is most likely
+with EXWM instead. Feel free to submit an issue anyways.

@@ -1,9 +1,11 @@
 ;;; private/exwm/autoload/exwm-edit.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defvar +exwm-edit-activate-appropriate-major-mode--timer nil)
-;;;###autoload
 (defvar +exwm-edit-default-major-mode 'org-mode)
+
+;;;###autoload
+(defvar +exwm-edit-activate-appropriate-major-mode--timer nil
+  "A variable used internally to store a timer object.")
 
 ;;;###autoload
 (defun +exwm-edit-activate-appropriate-major-mode ()

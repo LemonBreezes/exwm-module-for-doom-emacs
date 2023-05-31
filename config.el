@@ -51,6 +51,11 @@
   ;; Show EXWM buffers in buffer switching prompts.
   (add-hook 'exwm-mode-hook #'doom-mark-buffer-as-real-h))
 
+
+(cl-pushnew ?\C-c exwm-input-prefix-keys)
+(map! :map exwm-mode-map
+      :desc "Send C-c" "C-c" (cmd! (exwm-input--fake-key ?\C-c)))
+
 (use-package exwm-evil
   :when (featurep! :editor evil)
   :after exwm
@@ -58,12 +63,10 @@
   (exwm-evil-enable-mouse-workaround)
   (add-hook 'exwm-manage-finish-hook 'exwm-evil-mode)
   (cl-pushnew 'escape exwm-input-prefix-keys)
-  (cl-pushnew ?\C-c exwm-input-prefix-keys)
   (map! :map exwm-evil-mode-map
         ;; We need a way to send `escape' and `C-c' keys to the EXWM application.
         :prefix "C-c"
-        :desc "Send Escape" "C-i" (cmd! (exwm-input--fake-key 'escape))
-        :desc "Send Control-C" "C-c" (cmd! (exwm-input--fake-key ?\C-c))))
+        :desc "Send Escape" "C-i" (cmd! (exwm-input--fake-key 'escape))))
 
 (use-package! exwm-firefox-evil
   :when (featurep! :editor evil)
