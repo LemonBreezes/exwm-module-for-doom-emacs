@@ -5,14 +5,18 @@
   "Select and open a link with your keyboard."
   (interactive)
   (exwm-input--fake-key ?\M-j)
-  (exwm-firefox-evil-insert))
+  (exwm-firefox-evil-insert)
+  (add-transient-hook! 'exwm-update-title-hook
+    (when exwm-firefox-evil-mode (exwm-firefox-evil-normal))))
 
 ;;;###autoload
 (defun exwm-firefox-core-hint-links-new-tab-and-switch ()
   "Select and open a link in a new tab using your keyboard."
   (interactive)
   (exwm-input--fake-key ?\M-l)
-  (exwm-firefox-evil-insert))
+  (exwm-firefox-evil-insert)
+  (add-transient-hook! 'exwm-update-title-hook
+    (when exwm-firefox-evil-mode (exwm-firefox-evil-normal))))
 
 ;;;###autoload
 (defun +exwm-firefox-core-cancel ()

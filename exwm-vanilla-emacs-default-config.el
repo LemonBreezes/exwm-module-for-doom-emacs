@@ -9,8 +9,9 @@
         inhibit-startup-screen t
         abbrev-file-name ,abbrev-file-name)
 
-(with-eval-after-load "org"
-  (setopt org-agenda-files ',org-agenda-files))
+(with-eval-after-load 'org
+  (setopt org-agenda-files ',(progn (require 'org)
+                                    org-agenda-files)))
 
 (set-language-environment "UTF-8")
 

@@ -13,8 +13,13 @@
          (run-at-time (* 2 input-delay) nil
                       (defun +exwm-refocus-application--cleanup ()
                         (advice-remove #'+exwm-refocus-application #'ignore)))
-         (run-at-time input-delay nil (lambda () (throw 'exit #'ignore)))
+         (run-at-time input-delay nil
+                      (lambda () (ignore-errors (throw 'exit #'ignore))))
          (read-string ""))))))
+
+;;;###autoload
+(defun +exwm-select-window-a (oldfun window &rest args)
+                (when window (apply oldfun window args)))
 
 ;;;###autoload
 (defun +exwm-rename-buffer-to-title ()
@@ -65,21 +70,8 @@ a new workspace as well."
 
 ;;;###autoload
 (defun +exwm-vanilla-emacs-find-file (file)
-  ;; TODO Read about interactive to improve this
   (interactive)
   (funcall #'start-process "Emacs" nil "emacs" "-Q"
          "--eval" (+exwm-read-unquote-config +exwm-vanilla-emacs-config-file)
          "--file" (or file
                       (read-file-name "Find file: " nil default-directory nil))))
-
-;;;###autoload
-(defun +exwm-setup-nested-emacs-keys ()
-  "Set up the keybindings for separate Emacs sessions managed
-under EXWM."
-  (when (and exwm-class-name
-             (string= exwm-class-name "Emacs"))
-    (setq-local exwm-input-prefix-keys
-                (cl-remove-if
-                 (lambda (key) (memq key '(?\C-x ?\C-h ?\C-u ?\M-: ?\M-x)))
-                 exwm-input-prefix-keys))
-    (setq-local overriding-local-map +exwm-nested-emacs-map)))
