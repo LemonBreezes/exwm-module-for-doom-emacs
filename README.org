@@ -16,6 +16,8 @@
   - [[#setting-the-default-major-mode-for-exwm-edit][Setting the default major mode for EXWM Edit.]]
   - [[#setting-up-link-hints-for-chrome-based-and-firefox-based-web-browsers][Setting up link hints for Chrome-based and Firefox-based web browsers]]
   - [[#setting-up-multiple-monitors][Setting up multiple monitors]]
+  - [[#setting-up-an-alternate-emacs-configuration-for-nested-emacs-sessions][Setting up an alternate Emacs configuration for nested Emacs sessions]]
+  - [[#using-i3-style-keybindings][Using i3-style keybindings]]
 - [[#troubleshooting][Troubleshooting]]
   - [[#how-do-i-send-escape-or-c-c-to-applications][How do I send ~escape~ or ~C-c~ to applications?]]
   - [[#when-i-mouse-click-while-in-evils-normal-state-i-get-an-error][When I mouse-click while in Evil's normal state I get an error.]]
@@ -30,6 +32,7 @@ This module enables and provides sane defaults for the Emacs X Window Manager
 + Edit any application's input field with Emacs.
 + Use Emacs input methods in other applications.
 + Use VIM keys in major web browsers like Firefox and Chrome.
++ Launch and control nested Emacs sessions within Emacs.
 + Truly use Evil everywhere!
 
 ** Maintainers
@@ -48,14 +51,13 @@ This module provides no flags.
 + [[https://github.com/agzam/exwm-edit][exwm-edit]]
 + [[https://github.com/andreasjansson/language-detection.el][language-detection]]
 + [[https://github.com/ieure/exwm-mff][exwm-mff]]
++ [[https://github.com/SebastienWae/app-launcher][app-launcher]]
 
 ** Hacks
 
 When switching to a workspace where an EXWM buffer is focused, inputs do not get
-passed to the application. To fix this, I wrote a hook which clicks on the
-application with the mouse to regain focus. The spot I chose for clicking may
-not be blank for all applications. If someone finds a better solution, please
-submit a pull request.
+passed to the application. To work around this, I wrote a hook which briefly activates
+the minibuffer for input and then quits the minibuffer.
 
 * Prerequisites
 
@@ -66,15 +68,21 @@ This module has no prerequisites.
 + Edit any application's input field with =C-c '=.
 + Use Emacs input methods in other applications. Simply set the input method as
   usual with =C-x RET C-\=.
++ Open nested sessions of Emacs with alternate configurations.
 + Use Evil in any application! Specific browsers such as Google Chrome and
   Firefox have extended support for Evil keybindings. Simply install the
   ~link-hints~ extension/add-on and start VIM-ing!
 
 Moreover, when this module is loaded, the following global keybindings are made:
 
-| Keybinding | Description                  |
-|------------+------------------------------|
-| =SPC $=    | Open a GNU/Linux application |
+| Keybinding | Description                         |
+|------------+-------------------------------------|
+| =SPC $=      | Open a GNU/Linux application        |
+| SPC o n    | Open a nested Emacs session         |
+| SPC o N    | Open a nested vanilla Emacs session |
+| SPC f v    | Find file in vanilla Emacs          |
+| SPC f V    | Find this file in vanilla Emacs     |
+| C-c '      | Edit input field in Emacs           |
 
 * Configuration
 
@@ -90,6 +98,7 @@ window manager present. The recommended way to go about this is with the
 By default, when you edit an application's input field and no programming
 language can be detected in the text, ~org-mode~ will your major mode. If you
 would like to change this, set the ~+exwm-edit-default-major-mode~ variable:
+
 #+begin_src elisp
 (setq +exwm-edit-default-major-mode 'markdown-mode)
 #+end_src
@@ -108,14 +117,69 @@ Currently this module does not provide any simplified setup for multi-head
 configurations. Please refer to
 https://github.com/ch11ng/exwm/wiki#randr-multi-screen for how to do this.
 
+** Setting up an alternate Emacs configuration for nested Emacs sessions
+
+Although we provide a curated default vanilla-Emacs configuration (without
+Evil), you can write your own configuration file and evaluate
+
+#+begin_src elisp
+(setq +exwm-vanilla-emacs-config-file "/path/to/alternate-emacs-config.el")
+#+end_src
+
+** Using i3-style keybindings
+
+If you would like i3-style keybindings, I recommend adding the following
+paragraph to your private configuration:
+#+begin_src elisp
+;; i3-like keybindings for EXWM
+(windmove-mode +1)
+(when (featurep! :private exwm)
+  (map! "s-j" #'windmove-left
+        "s-k" #'windmove-down
+        "s-l" #'windmove-up
+        "s-;" #'windmove-right
+        "s-J" #'windmove-swap-states-left
+        "s-K" #'windmove-swap-states-down
+        "s-L" #'windmove-swap-states-up
+        "s-Q" #'delete-window
+        "s-:" #'windmove-swap-states-right
+        "s-v" #'split-window-right
+        "s-h" #'split-window-below
+        (:when (featurep! :ui workspaces)
+         "s-1" #'+workspace/switch-to-0
+         "s-2" #'+workspace/switch-to-1
+         "s-3" #'+workspace/switch-to-2
+         "s-4" #'+workspace/switch-to-3
+         "s-5" #'+workspace/switch-to-4
+         "s-6" #'+workspace/switch-to-5
+         "s-7" #'+workspace/switch-to-6
+         "s-8" #'+workspace/switch-to-7
+         "s-9" #'+workspace/switch-to-8
+         "s-0" #'+workspace/switch-to-final
+         (:when (featurep! :term vterm)
+          "s-<return>" (defun +run-or-raise-vterm ()
+                         (interactive)
+                         (+workspace-switch "Vterm" t)
+                         (let ((display-buffer-alist))
+                           (vterm most-positive-fixnum)))))
+        "s-d" #'app-launcher-run-app
+        "s-'" #'exwm-edit--compose)
+  (after! exwm
+    (dolist (key '(?\s-h ?\s-j ?\s-k ?\s-l ?\s-H ?\s-J ?\s-K ?\s-L ?\s-0 ?\s-1
+                         ?\s-2 ?\s-3 ?\s-4 ?\s-5 ?\s-6 ?\s-7 ?\s-8 ?\s-9 ?\s-d
+                         ?\s-\; ?\s-v ?\s-' ?\C-\[ ?\s-Q))
+      (cl-pushnew key exwm-input-prefix-keys))))
+#+end_src
+
 * Troubleshooting
 
 ** How do I send ~escape~ or ~C-c~ to applications?
 
-| Keybind   | Description                                            |
-|-----------+--------------------------------------------------------|
+| Keybind | Description                                            |
+|---------+--------------------------------------------------------|
 | =C-c C-i= | Send the escape key (only bound when Evil is enabled). |
 | =C-c C-c= | Send the C-c key.                                      |
+| C-c C-q | Send the next key to the application.                  |
 
 ** When I mouse-click while in Evil's normal state I get an error.
 
@@ -131,6 +195,6 @@ https://github.com/walseb/exwm-firefox-evil/issues/1
 :CREATED_TIME: [2022-02-25 Fri 21:17]
 :END:
 
-Add a `qemacs` submodule. Also document the `xwininfo` requirement for
-`posframe` and the necessity to run `posframe-delete-all` if something goes
-wrong. Also fix the hack section because the mouse hack was removed.
+- [ ] Document workarounds for packages utilizing child frames.
+- [ ] Write a separate nested Emacs mode.
+- [ ] Add Evil to the nested vanilla Emacs configuration file.

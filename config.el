@@ -15,7 +15,6 @@ expansion occurs within the parent Emacs session.")
 
 (use-package! exwm
   :config
-
   (use-package! exwm-randr
     :config
     (exwm-randr-enable))
@@ -98,8 +97,10 @@ expansion occurs within the parent Emacs session.")
 
   (when (featurep! :editor evil)
     (evil-set-initial-state 'exwm-mode 'emacs)
+    (after! evil-snipe
+      (add-to-list 'evil-snipe-disabled-modes 'exwm-mode))
     (cl-pushnew (aref (kbd doom-leader-alt-key) 0) exwm-input-prefix-keys))
-
+  
   (when (featurep! :ui popup)
     (cl-pushnew ?\C-` exwm-input-prefix-keys))
 
@@ -152,6 +153,8 @@ expansion occurs within the parent Emacs session.")
   :after exwm
   :init
   (defvar exwm-edit-bind-default-keys nil)
+  (map! :map exwm-mode-map
+        :desc "Edit input field in Emacs" "C-c '" #'exwm-edit--compose)
   :config
   (setq! exwm-edit-split "below"
          exwm-edit-paste-delay 0.2)
@@ -166,6 +169,8 @@ expansion occurs within the parent Emacs session.")
 
 (use-package! app-launcher
   :commands app-launcher-run-app
+  :init
+  (map! :leader :desc "Launch Linux app" "$" #'app-launcher-run-app)
   :config
   (defun +app-launcher--action-function-default-a (selected)
     (when (featurep! :ui workspaces)
@@ -174,3 +179,52 @@ expansion occurs within the parent Emacs session.")
       (+workspace-switch selected t)))
   (advice-add #'app-launcher--action-function-default :before
               #'+app-launcher--action-function-default-a))
+
+(use-package exwm-evil
+  :when (featurep! :editor evil)
+  :after exwm
+  :config
+  (exwm-evil-enable-mouse-workaround)
+  (add-hook 'exwm-manage-finish-hook 'exwm-evil-mode)
+  (cl-pushnew 'escape exwm-input-prefix-keys))
+
+(use-package! exwm-firefox-evil
+  :when (featurep! :editor evil)
+  :after exwm
+  :config
+  (cl-pushnew 'escape exwm-input-prefix-keys)
+  ;; We can use VIM keys with any browser that has compatible keybindings.
+  (cl-loop for class in '("firefoxdeveloperedition"
+                          "\"firefoxdeveloperedition\""
+                          "IceCat"
+                          "chromium-browser"
+                          "Chromium"
+                          "Google-chrome"
+                          "Google-chrome-unstable"
+                          "librewolf-default")
+           do (cl-pushnew class exwm-firefox-evil-firefox-class-name
+                          :test #'string=))
+
+  (add-hook 'exwm-manage-finish-hook 'exwm-firefox-evil-activate-if-firefox)
+  (map! :map exwm-firefox-evil-mode-map
+        :n "f" #'exwm-firefox-core-hint-links ; Requires Link Hints add-on.
+        :n "F" #'exwm-firefox-core-hint-links-new-tab-and-switch
+        :n "u" #'exwm-firefox-core-tab-close-undo
+        :n "U" #'exwm-firefox-core-undo
+        :n "/" #'exwm-firefox-core-find ; Compatible with Chrome as well.
+        :n [remap exwm-firefox-core-cancel] #'+exwm-firefox-core-cancel
+        :after exwm-evil
+        ;; These are mroe in line with Evil than the default
+        :n "g0" #'exwm-firefox-core-tab-first
+        :n "g$" #'exwm-firefox-core-tab-last
+        :n "0"  #'exwm-evil-core-beginning-of-line
+        :n "$"  #'exwm-evil-core-end-of-line
+        ;; This way we can use prefix arguments with these commands.
+        :n "j" #'exwm-evil-core-down
+        :n "k" #'exwm-evil-core-up
+        :n "h" #'exwm-evil-core-left
+        :n "l" #'exwm-evil-core-right
+        ;; Add zoom commands
+        :n "+" #'exwm-evil-core-zoom-in
+        :n "-" #'exwm-evil-core-zoom-out
+        :n "=" #'exwm-evil-core-reset-zoom))
