@@ -1,4 +1,4 @@
-;;; private/exwm/autoload/exwm.el -*- lexical-binding: t; -*-
+;;; os/exwm/autoload/exwm.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun +exwm-do-mouse-click (x y &optional button-num window-id)

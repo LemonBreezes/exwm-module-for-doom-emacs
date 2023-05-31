@@ -1,6 +1,6 @@
-#+TITLE:   private/exwm
+#+TITLE:   os/exwm
 #+DATE:    January 5, 2022
-#+SINCE:   <replace with next tagged release version>
+#+SINCE:   v1.0.0
 #+STARTUP: inlineimages nofold
 
 * Table of Contents :TOC_3:noexport:
@@ -42,7 +42,6 @@ This module provides no flags.
 
 ** Plugins
 
-# A list of linked plugins
 + [[https://github.com/ch11ng/exwm][exwm]]
 + [[https://github.com/LemonBreezes/exwm-evil][exwm-evil]]
 + [[https://github.com/walseb/exwm-firefox-evil][exwm-firefox-evil]]
@@ -64,7 +63,7 @@ This module has no prerequisites.
 
 * Features
 
-+ Edit any application's input field with ~C-c '~.
++ Edit any application's input field with =C-c '=.
 + Use Emacs input methods in other applications. Simply set the input method as
   usual with =C-x RET C-\=.
 + Use Evil in any application! Specific browsers such as Google Chrome and
@@ -87,9 +86,6 @@ window manager present. The recommended way to go about this is with the
 ~startx~.
 
 ** Setting the default major mode for EXWM Edit.
-:PROPERTIES:
-:CREATED_TIME: [2022-01-05 Wed 23:44]
-:END:
 
 By default, when you edit an application's input field and no programming
 language can be detected in the text, ~org-mode~ will your major mode. If you
@@ -99,9 +95,6 @@ would like to change this, set the ~+exwm-edit-default-major-mode~ variable:
 #+end_src
 
 ** Setting up link hints for Chrome-based and Firefox-based web browsers
-:PROPERTIES:
-:CREATED_TIME: [2022-01-06 Thu 01:19]
-:END:
 
 For users of Evil, the ~f~ and ~F~ keys are bound to special Link Hint commands
 within Chrome-based and Firefox-based web browsers. For these commands to work,
@@ -110,9 +103,6 @@ browsers, install Link Hint through [[https://chrome.google.com/webstore/detail/
 [[https://addons.mozilla.org/en-US/firefox/addon/linkhints/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search][this]] link instead.
 
 ** Setting up multiple monitors
-:PROPERTIES:
-:CREATED_TIME: [2022-01-06 Thu 00:06]
-:END:
 
 Currently this module does not provide any simplified setup for multi-head
 configurations. Please refer to
@@ -120,12 +110,7 @@ https://github.com/ch11ng/exwm/wiki#randr-multi-screen for how to do this.
 
 * Troubleshooting
 
-# Common issues and their solution, or places to look for help.
-
 ** How do I send ~escape~ or ~C-c~ to applications?
-:PROPERTIES:
-:CREATED_TIME: [2022-01-06 Thu 00:13]
-:END:
 
 | Keybind   | Description                                            |
 |-----------+--------------------------------------------------------|
@@ -133,10 +118,10 @@ https://github.com/ch11ng/exwm/wiki#randr-multi-screen for how to do this.
 | =C-c C-c= | Send the C-c key.                                      |
 
 ** When I mouse-click while in Evil's normal state I get an error.
-:PROPERTIES:
-:CREATED_TIME: [2022-01-06 Thu 00:24]
-:END:
 
 I (the author) do not know how to suppress or remove the,
 "evil-mouse-drag-region must be bound to an event with parameters" error. I
 recommend ignoring this error though as your clicks still register.
+
+This bug is a result of a workaround I copied from this GitHub issue:
+https://github.com/walseb/exwm-firefox-evil/issues/1

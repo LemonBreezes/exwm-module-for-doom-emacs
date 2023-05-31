@@ -1,4 +1,4 @@
-;;; private/exwm/config.el -*- lexical-binding: t; -*-
+;;; os/exwm/config.el -*- lexical-binding: t; -*-
 
 (add-hook 'exwm-update-title-hook #'+exwm-rename-buffer-to-title)
 
@@ -56,7 +56,13 @@
 
 (cl-pushnew ?\C-c exwm-input-prefix-keys)
 (map! :map exwm-mode-map
-      :desc "Send C-c" "C-c" (cmd! (exwm-input--fake-key ?\C-c)))
+      :prefix "C-c"
+      ;; We need a prefix to execute Emacs commands with. As `C-c' is our
+      ;; prefix, we also need a way to send `C-c' to the application.
+      :desc "Send C-c" "C-c" (cmd! (exwm-input--fake-key ?\C-c))
+      ;; We also set up a separate general way to send prefix keys to our
+      ;; application.
+      :desc "Send the next key" "C-q" #'exwm-input-send-next-key)
 
 (use-package exwm-evil
   :when (featurep! :editor evil)
@@ -66,7 +72,7 @@
   (add-hook 'exwm-manage-finish-hook 'exwm-evil-mode)
   (cl-pushnew 'escape exwm-input-prefix-keys)
   (map! :map exwm-evil-mode-map
-        ;; We need a way to send `escape' and `C-c' keys to the EXWM application.
+        ;; We need a way to send the `escape' key to the EXWM application.
         :prefix "C-c"
         :desc "Send Escape" "C-i" (cmd! (exwm-input--fake-key 'escape))))
 
@@ -87,7 +93,7 @@
 
   (add-hook 'exwm-manage-finish-hook 'exwm-firefox-evil-activate-if-firefox)
   (map! :map exwm-firefox-evil-mode-map
-        :n "f" #'exwm-firefox-core-hint-links ; Requires links-hint add-on.
+        :n "f" #'exwm-firefox-core-hint-links ; Requires Link Hints add-on.
         :n "F" #'exwm-firefox-core-hint-links-new-tab-and-switch
         :n "u" #'exwm-firefox-core-tab-close-undo
         :n "U" #'exwm-firefox-core-undo
@@ -98,6 +104,7 @@
         :n "k" #'exwm-evil-core-up
         :n "h" #'exwm-evil-core-left
         :n "l" #'exwm-evil-core-right
+        ;; Add zoom commands
         :n "+" #'exwm-evil-core-zoom-in
         :n "-" #'exwm-evil-core-zoom-out
         :n "=" #'exwm-evil-core-reset-zoom))
@@ -114,7 +121,3 @@
 
 (use-package! exwm-mff
   :hook (exwm-init . exwm-mff-mode))
-
-(when (and (featurep! +workspaces)
-           (featurep! :ui workspaces))
-  (load! "+workspaces"))

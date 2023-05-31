@@ -1,4 +1,4 @@
-;;; private/exwm/autoload/exwm-firefox.el -*- lexical-binding: t; -*-
+;;; os/exwm/autoload/exwm-firefox.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defun exwm-firefox-core-hint-links ()

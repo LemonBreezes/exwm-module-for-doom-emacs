@@ -1,4 +1,4 @@
-;;; private/exwm/autoload/exwm-edit.el -*- lexical-binding: t; -*-
+;;; os/exwm/autoload/exwm-edit.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (defvar +exwm-edit-default-major-mode 'org-mode
