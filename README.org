@@ -13,6 +13,7 @@
 - [[#prerequisites][Prerequisites]]
 - [[#features][Features]]
 - [[#configuration][Configuration]]
+  - [[#][]]
 - [[#troubleshooting][Troubleshooting]]
 
 * Description
@@ -28,7 +29,7 @@ This module enables and provides sane defaults for the Emacs X Window Manager
 
 ** Maintainers
 
-+ @LemonBreezes (Author)
++ @[[https://github.com/LemonBreezes][LemonBreezes]] (Author)
 
 ** Module Flags
 
@@ -59,7 +60,6 @@ This module has no prerequisites.
 
 * Features
 
-# An in-depth list of features, how to use them, and their dependencies.
 + Edit any application's input field with =C-c '=
 + Use Emacs input methods in other applications. Simply set the input method as
   usual with =C-x RET C-\=
@@ -71,7 +71,9 @@ This module has no prerequisites.
 
 * Configuration
 
-# How to configure this module, including common problems and how to address them.
+**
+
+
 
 * Troubleshooting
 
